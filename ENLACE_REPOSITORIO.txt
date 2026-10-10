@@ -1,25 +1,25 @@
-EVIDENCIA GA7-220501096-AA2-EV02
+EVIDENCIA: GA7-220501096-AA3-EV01
 
-PROYECTO:
-Statistics System Web
-
-DESARROLLADOR:
-Edwin Pautt
-
-REPOSITORIO DE GITHUB:
-https://github.com/edwinpautt/StatisticsSystemWeb.git
+PROYECTO: StatisticsSystemWeb
 
 DESCRIPCIÓN:
-Sistema web desarrollado para registrar, consultar,
-editar y eliminar información relacionada con el uso
-de los laboratorios de simulación clínica.
+Aplicación web desarrollada en Java mediante JSP y Servlets, conectada a una base de datos MySQL. Permite registrar, consultar, actualizar y eliminar registros del uso de los laboratorios de simulación clínica.
 
-TECNOLOGÍAS:
-- Java
-- JSP
-- Servlets
-- JDBC
-- MySQL
-- Apache Tomcat 10.1
-- Git
-- GitHub
+ENLACE DEL REPOSITORIO GITHUB:
+https://github.com/edwinpautt/StatisticsSystemWeb.git
+
+TECNOLOGÍAS UTILIZADAS:
+
+Java
+
+JSP y Servlets
+
+Apache Tomcat
+
+MySQL
+
+JDBC
+
+NetBeans
+
+Git y GitHub
