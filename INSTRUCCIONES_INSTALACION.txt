@@ -1,0 +1,57 @@
+STATISTICS SYSTEM
+INSTRUCCIONES DE INSTALACIÓN Y EJECUCIÓN
+Evidencia GA7-220501096-AA4-EV03
+
+1. REQUISITOS
+- Java JDK 21.
+- Apache NetBeans IDE 21 o una versión compatible.
+- Apache Tomcat configurado en NetBeans.
+- MySQL Server y phpMyAdmin (opcional, para administrar la base de datos).
+
+2. PREPARAR LA BASE DE DATOS
+1. Iniciar MySQL.
+2. Abrir phpMyAdmin desde el navegador.
+3. Crear una base de datos llamada: statistics_system.
+4. Seleccionar la base de datos y entrar en la opción Importar.
+5. Seleccionar el archivo database/statistics_system.sql incluido en esta entrega.
+6. Ejecutar la importación y comprobar que se hayan creado las tablas.
+
+Si el archivo SQL no está presente en la carpeta database, solicitarlo antes de continuar.
+
+3. CONFIGURAR LA CONEXIÓN
+1. Abrir el proyecto en NetBeans.
+2. Revisar el archivo src/java/config/ConexionBD.java.
+3. Confirmar que la URL de conexión apunte a:
+   jdbc:mysql://localhost:3306/statistics_system
+4. Ajustar el usuario y la contraseña de MySQL según la instalación del computador donde se ejecutará el proyecto.
+5. El controlador MySQL Connector/J está incluido en:
+   web/WEB-INF/lib/mysql-connector-j-9.7.0.jar
+
+4. ABRIR Y EJECUTAR EL PROYECTO
+1. Abrir NetBeans.
+2. Seleccionar File > Open Project.
+3. Buscar y seleccionar la carpeta StatisticsSystemWeb.
+4. Esperar a que NetBeans reconozca las bibliotecas y dependencias.
+5. Configurar un servidor Apache Tomcat compatible.
+6. Hacer clic derecho sobre el proyecto y seleccionar Clean and Build.
+7. Si la compilación termina correctamente, seleccionar Run.
+8. La aplicación se abrirá en una dirección similar a:
+   http://localhost:8080/StatisticsSystemWeb
+
+5. ACCESO AL SISTEMA
+El sistema solicita iniciar sesión.
+Si la base de datos importada contiene un usuario administrador, utilizar las credenciales de esa cuenta que son las siguiente :usuario: prueba contraseña:prueba123
+Si no existe un administrador, ejecutar el procedimiento CrearAdministrador.java desde NetBeans, siguiendo la configuración de conexión de la base de datos.
+Por seguridad, cambiar cualquier contraseña inicial después del primer ingreso.
+
+6. RECOMENDACIONES
+- No publicar contraseñas reales ni datos personales en repositorios públicos.
+- Utilizar datos de prueba para la demostración.
+- Mantener MySQL y Tomcat iniciados mientras se utiliza la aplicación.
+- Si ocurre un error de conexión, revisar ConexionBD.java, el servicio MySQL y el nombre de la base de datos.
+- Si el proyecto no compila, revisar la pestaña Output de NetBeans y verificar que el JDK y Tomcat estén configurados.
+
+Repositorio:
+https://github.com/edwinpautt/StatisticsSystemWeb
+
+Desarrollado como parte de la evidencia GA7-220501096-AA4-EV03.
