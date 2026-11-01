@@ -1,9 +1,20 @@
+
 package model;
 
 import java.sql.Date;
 
+/**
+ * Clase modelo que representa un registro de uso
+ * de los laboratorios de simulación clínica.
+ *
+ * Contiene los atributos y métodos necesarios para
+ * administrar la información de cada actividad.
+ *
+ * @author Edwin Pautt
+ */
 public class Registro {
 
+    // Atributos del registro.
     private int id;
     private String programa;
     private String asignatura;
@@ -13,11 +24,16 @@ public class Registro {
     private String horario;
     private String elementos;
 
-    // Constructor vacío
+    /**
+     * Constructor vacío.
+     */
     public Registro() {
     }
 
-    // Constructor sin ID
+    /**
+     * Constructor para crear registros nuevos.
+     * No requiere identificador porque se genera en la base de datos.
+     */
     public Registro(String programa, String asignatura, String docente,
                     String area, Date fecha, String horario, String elementos) {
 
@@ -30,7 +46,9 @@ public class Registro {
         this.elementos = elementos;
     }
 
-    // Constructor completo
+    /**
+     * Constructor completo para consultar registros existentes.
+     */
     public Registro(int id, String programa, String asignatura, String docente,
                     String area, Date fecha, String horario, String elementos) {
 
@@ -43,6 +61,8 @@ public class Registro {
         this.horario = horario;
         this.elementos = elementos;
     }
+
+    // Métodos para obtener y modificar los atributos.
 
     public int getId() {
         return id;

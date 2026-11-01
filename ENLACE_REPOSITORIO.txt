@@ -1,25 +1,32 @@
-EVIDENCIA: GA7-220501096-AA3-EV01
+**EVIDENCIA GA7-220501096-AA4-EV03**
 
-PROYECTO: StatisticsSystemWeb
+**Proyecto:** Statistics System  
+**Aprendiz:** Edwin Pautt Orozco  
+**Programa de formación:** Análisis y Desarrollo de Software  
+**Tecnología:** Java, JSP, HTML, CSS y JavaScript  
+**Base de datos:** MySQL  
+**Entorno de desarrollo:** Apache NetBeans IDE 21  
+**Servidor:** Apache Tomcat  
 
-DESCRIPCIÓN:
-Aplicación web desarrollada en Java mediante JSP y Servlets, conectada a una base de datos MySQL. Permite registrar, consultar, actualizar y eliminar registros del uso de los laboratorios de simulación clínica.
+Descripción del proyecto
 
-ENLACE DEL REPOSITORIO GITHUB:
-https://github.com/edwinpautt/StatisticsSystemWeb.git
+Statistics System es una aplicación web desarrollada para gestionar los registros de actividades realizadas en los laboratorios de simulación clínica, permitiendo registrar, consultar y administrar información, generar reportes estadísticos y controlar el acceso mediante roles de usuario.
 
-TECNOLOGÍAS UTILIZADAS:
+Funcionalidades desarrolladas
 
-Java
+- Inicio y cierre de sesión.
+- Panel principal de navegación.
+- Registro de actividades de laboratorio.
+- Consulta, edición y eliminación de registros.
+- Generación de reportes y estadísticas.
+- Administración de usuarios.
+- Control de acceso según el rol de usuario.
+- Módulo de configuración administrativa.
 
-JSP y Servlets
+Repositorio GitHub
 
-Apache Tomcat
+Enlace: https://github.com/edwinpautt/StatisticsSystemWeb
 
-MySQL
+Evidencia
 
-JDBC
-
-NetBeans
-
-Git y GitHub
+GA7-220501096-AA4-EV03 – Componente front-end del proyecto formativo y proyectos de clase.

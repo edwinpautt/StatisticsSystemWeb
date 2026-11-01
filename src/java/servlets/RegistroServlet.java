@@ -1,3 +1,4 @@
+
 package servlets;
 
 import dao.RegistroDAO;
@@ -6,100 +7,138 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 import model.Registro;
 
 import java.io.IOException;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.sql.Date;
 import java.util.List;
 
-/**
- * Servlet encargado de gestionar las operaciones relacionadas
- * con los registros de uso de los laboratorios de simulación clínica.
- *
- * Permite realizar las siguientes operaciones:
- * - Registrar información.
- * - Consultar registros.
- * - Actualizar registros.
- * - Eliminar registros.
- *
- * El Servlet recibe las solicitudes provenientes de las páginas JSP
- * y utiliza RegistroDAO para realizar las operaciones en la base de datos.
- *
- * @author Edwin Pautt
- */
 @WebServlet("/RegistroServlet")
 public class RegistroServlet extends HttpServlet {
 
-    // Objeto utilizado para realizar las operaciones con la base de datos.
     private RegistroDAO registroDAO;
 
-    /**
-     * Inicializa el Servlet y crea la instancia del DAO.
-     *
-     * @throws ServletException si ocurre un error durante la inicialización.
-     */
     @Override
     public void init() throws ServletException {
         registroDAO = new RegistroDAO();
     }
 
-    /**
-     * Procesa las solicitudes POST enviadas desde los formularios.
-     *
-     * Dependiendo de la acción recibida, permite insertar o actualizar
-     * la información de un registro.
-     *
-     * @param request solicitud enviada por el cliente.
-     * @param response respuesta enviada al cliente.
-     * @throws ServletException si ocurre un error relacionado con el Servlet.
-     * @throws IOException si ocurre un error de entrada o salida.
-     */
+    // Verifica que exista una sesión activa.
+    private boolean tieneSesion(HttpServletRequest request) {
+
+        HttpSession session = request.getSession(false);
+
+        return session != null
+                && session.getAttribute("usuario") != null;
+    }
+
+    // Verifica si el usuario es administrador.
+    private boolean esAdministrador(HttpServletRequest request) {
+
+        HttpSession session = request.getSession(false);
+
+        if (session == null) {
+            return false;
+        }
+
+        String rol = (String) session.getAttribute("rol");
+
+        return "ADMINISTRADOR".equalsIgnoreCase(rol);
+    }
+
+    // Redirecciona mostrando un mensaje.
+    private void redireccionar(
+            HttpServletRequest request,
+            HttpServletResponse response,
+            String destino,
+            String mensaje) throws IOException {
+
+        response.sendRedirect(
+                request.getContextPath()
+                + destino
+                + "?mensaje="
+                + URLEncoder.encode(mensaje, StandardCharsets.UTF_8)
+        );
+    }
+
+    // ==========================================
+    // PROCESAR REGISTROS
+    // ==========================================
+
     @Override
-    protected void doPost(HttpServletRequest request,
-                          HttpServletResponse response)
+    protected void doPost(
+            HttpServletRequest request,
+            HttpServletResponse response)
             throws ServletException, IOException {
 
-        // Permite recibir correctamente caracteres especiales.
         request.setCharacterEncoding("UTF-8");
 
-        // Obtiene la acción enviada desde el formulario.
+        if (!tieneSesion(request)) {
+            response.sendRedirect(
+                    request.getContextPath() + "/login.jsp"
+            );
+            return;
+        }
+
         String accion = request.getParameter("accion");
 
-        // Si no se especifica una acción, se realiza un nuevo registro.
-        if (accion == null || accion.equals("insertar")) {
-
-            insertar(request, response);
-
-        } else if (accion.equals("actualizar")) {
-
-            // Actualiza un registro existente.
-            actualizar(request, response);
-
-        } else {
-
-            // Si la acción no es reconocida, se regresa al Servlet.
-            response.sendRedirect(
-                    request.getContextPath() + "/RegistroServlet"
+        if (accion == null) {
+            redireccionar(
+                    request, response,
+                    "/registro.jsp",
+                    "Operación no especificada."
             );
+            return;
+        }
+
+        // Solo el administrador puede editar o eliminar.
+        if ("actualizar".equals(accion)
+                || "eliminar".equals(accion)) {
+
+            if (!esAdministrador(request)) {
+                response.sendError(
+                        HttpServletResponse.SC_FORBIDDEN,
+                        "No tienes permisos para modificar o eliminar registros."
+                );
+                return;
+            }
+        }
+
+        switch (accion) {
+
+            case "insertar":
+                insertar(request, response);
+                break;
+
+            case "actualizar":
+                actualizar(request, response);
+                break;
+
+            case "eliminar":
+                eliminar(request, response);
+                break;
+
+            default:
+                redireccionar(
+                        request, response,
+                        "/registro.jsp",
+                        "Operación no reconocida."
+                );
         }
     }
 
-    /**
-     * Registra un nuevo uso del laboratorio.
-     *
-     * Obtiene los datos enviados desde el formulario, crea un objeto
-     * Registro y utiliza RegistroDAO para almacenarlo en la base de datos.
-     *
-     * @param request solicitud que contiene los datos del formulario.
-     * @param response respuesta enviada al navegador.
-     * @throws ServletException si ocurre un error durante el procesamiento.
-     * @throws IOException si ocurre un error de entrada o salida.
-     */
-    private void insertar(HttpServletRequest request,
-                          HttpServletResponse response)
+    // ==========================================
+    // INSERTAR REGISTRO
+    // ==========================================
+
+    private void insertar(
+            HttpServletRequest request,
+            HttpServletResponse response)
             throws ServletException, IOException {
 
-        // Obtiene los datos enviados desde el formulario.
         String programa = request.getParameter("programa");
         String asignatura = request.getParameter("asignatura");
         String docente = request.getParameter("docente");
@@ -110,10 +149,8 @@ public class RegistroServlet extends HttpServlet {
 
         try {
 
-            // Convierte la fecha recibida a formato SQL.
             Date fecha = Date.valueOf(fechaTexto);
 
-            // Crea el objeto con la información del registro.
             Registro registro = new Registro(
                     programa,
                     asignatura,
@@ -124,65 +161,45 @@ public class RegistroServlet extends HttpServlet {
                     elementos
             );
 
-            // Envía el registro al DAO para almacenarlo.
-            boolean guardado = registroDAO.insertarRegistro(registro);
+            boolean guardado =
+                    registroDAO.insertarRegistro(registro);
 
-            if (guardado) {
-
-                // Redirecciona mostrando un mensaje de confirmación.
-                response.sendRedirect(
-                        request.getContextPath()
-                        + "/RegistroServlet?mensaje=Registro+guardado+correctamente"
-                );
-
-            } else {
-
-                // Envía un mensaje de error a la página de registro.
-                request.setAttribute(
-                        "error",
-                        "No fue posible guardar el registro."
-                );
-
-                request.getRequestDispatcher("registro.jsp")
-                        .forward(request, response);
-            }
+            redireccionar(
+                    request,
+                    response,
+                    "/registro.jsp",
+                    guardado
+                    ? "Registro guardado correctamente."
+                    : "No fue posible guardar el registro."
+            );
 
         } catch (IllegalArgumentException e) {
 
-            // Maneja errores relacionados con el formato de la fecha.
             request.setAttribute(
                     "error",
                     "La fecha ingresada no es válida."
             );
 
-            request.getRequestDispatcher("registro.jsp")
+            request.getRequestDispatcher("/registro.jsp")
                     .forward(request, response);
         }
     }
 
-    /**
-     * Actualiza la información de un registro existente.
-     *
-     * Obtiene los datos modificados desde el formulario, crea el objeto
-     * Registro y solicita al DAO actualizar la información en la base de datos.
-     *
-     * @param request solicitud que contiene los datos modificados.
-     * @param response respuesta enviada al navegador.
-     * @throws ServletException si ocurre un error durante el procesamiento.
-     * @throws IOException si ocurre un error de entrada o salida.
-     */
-    private void actualizar(HttpServletRequest request,
-                            HttpServletResponse response)
+    // ==========================================
+    // ACTUALIZAR REGISTRO
+    // ==========================================
+
+    private void actualizar(
+            HttpServletRequest request,
+            HttpServletResponse response)
             throws ServletException, IOException {
 
         try {
 
-            // Obtiene el identificador del registro que se va a actualizar.
             int id = Integer.parseInt(
                     request.getParameter("id")
             );
 
-            // Obtiene los nuevos datos enviados desde el formulario.
             String programa = request.getParameter("programa");
             String asignatura = request.getParameter("asignatura");
             String docente = request.getParameter("docente");
@@ -191,10 +208,8 @@ public class RegistroServlet extends HttpServlet {
             String horario = request.getParameter("horario");
             String elementos = request.getParameter("elementos");
 
-            // Convierte la fecha al formato utilizado por MySQL.
             Date fecha = Date.valueOf(fechaTexto);
 
-            // Crea el objeto Registro que contiene la información actualizada.
             Registro registro = new Registro();
 
             registro.setId(id);
@@ -206,123 +221,96 @@ public class RegistroServlet extends HttpServlet {
             registro.setHorario(horario);
             registro.setElementos(elementos);
 
-            // Solicita al DAO actualizar la información.
             boolean actualizado =
                     registroDAO.actualizarRegistro(registro);
 
-            if (actualizado) {
-
-                // Redirecciona mostrando el mensaje de actualización.
-                response.sendRedirect(
-                        request.getContextPath()
-                        + "/RegistroServlet?mensaje=Registro+actualizado+correctamente"
-                );
-
-            } else {
-
-                // Informa que no se pudo realizar la actualización.
-                response.sendRedirect(
-                        request.getContextPath()
-                        + "/RegistroServlet?mensaje=No+se+actualizo+el+registro"
-                );
-            }
+            redireccionar(
+                    request,
+                    response,
+                    "/RegistroServlet",
+                    actualizado
+                    ? "Registro actualizado correctamente."
+                    : "No se actualizó el registro."
+            );
 
         } catch (Exception e) {
 
-            // Muestra información del error en la consola del servidor.
             e.printStackTrace();
 
-            response.sendRedirect(
-                    request.getContextPath()
-                    + "/RegistroServlet?mensaje=Error+al+actualizar"
+            redireccionar(
+                    request,
+                    response,
+                    "/RegistroServlet",
+                    "Error al actualizar el registro."
             );
         }
     }
 
-    /**
-     * Procesa las solicitudes GET del sistema.
-     *
-     * Permite eliminar registros y consultar la información almacenada.
-     *
-     * @param request solicitud enviada por el cliente.
-     * @param response respuesta enviada al cliente.
-     * @throws ServletException si ocurre un error durante el procesamiento.
-     * @throws IOException si ocurre un error de entrada o salida.
-     */
-    @Override
-    protected void doGet(HttpServletRequest request,
-                         HttpServletResponse response)
+    // ==========================================
+    // ELIMINAR REGISTRO
+    // ==========================================
+
+    private void eliminar(
+            HttpServletRequest request,
+            HttpServletResponse response)
             throws ServletException, IOException {
 
-        // Obtiene la acción solicitada.
-        String accion = request.getParameter("accion");
+        try {
 
-        // =====================================================
-        // ELIMINAR REGISTRO
-        // =====================================================
+            int id = Integer.parseInt(
+                    request.getParameter("id")
+            );
 
-        if ("eliminar".equals(accion)) {
+            boolean eliminado =
+                    registroDAO.eliminarRegistro(id);
 
-            try {
+            redireccionar(
+                    request,
+                    response,
+                    "/RegistroServlet",
+                    eliminado
+                    ? "Registro eliminado correctamente."
+                    : "No se encontró el registro."
+            );
 
-                // Obtiene el ID del registro que se desea eliminar.
-                int id = Integer.parseInt(
-                        request.getParameter("id")
-                );
+        } catch (NumberFormatException e) {
 
-                // Solicita al DAO eliminar el registro.
-                boolean eliminado =
-                        registroDAO.eliminarRegistro(id);
+            redireccionar(
+                    request,
+                    response,
+                    "/RegistroServlet",
+                    "Identificador no válido."
+            );
+        }
+    }
 
-                if (eliminado) {
+    // ==========================================
+    // CONSULTAR REGISTROS
+    // ==========================================
 
-                    // Redirecciona mostrando el mensaje de confirmación.
-                    response.sendRedirect(
-                            request.getContextPath()
-                            + "/RegistroServlet?mensaje=Registro+eliminado+correctamente"
-                    );
+    @Override
+    protected void doGet(
+            HttpServletRequest request,
+            HttpServletResponse response)
+            throws ServletException, IOException {
 
-                } else {
+        if (!tieneSesion(request)) {
 
-                    // Informa que el registro no fue encontrado.
-                    response.sendRedirect(
-                            request.getContextPath()
-                            + "/RegistroServlet?mensaje=No+se+encontro+el+registro"
-                    );
-                }
+            response.sendRedirect(
+                    request.getContextPath() + "/login.jsp"
+            );
 
-            } catch (Exception e) {
-
-                // Muestra el error en la consola del servidor.
-                e.printStackTrace();
-
-                response.sendRedirect(
-                        request.getContextPath()
-                        + "/RegistroServlet?mensaje=Error+al+eliminar"
-                );
-            }
-
-            // Finaliza el proceso de eliminación.
             return;
         }
 
-        // =====================================================
-        // CONSULTAR REGISTROS
-        // =====================================================
-
-        // Obtiene todos los registros almacenados en la base de datos.
         List<Registro> registros =
                 registroDAO.listarRegistros();
 
-        // Envía la lista de registros a la página JSP.
-        request.setAttribute(
-                "registros",
-                registros
-        );
+        request.setAttribute("registros", registros);
 
-        // Muestra los registros en la interfaz.
+        // Ahora la consulta abre una página independiente.
         request.getRequestDispatcher(
-                "registro.jsp"
+                "/consultarRegistros.jsp"
         ).forward(request, response);
     }
 }

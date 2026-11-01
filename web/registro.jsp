@@ -1,415 +1,513 @@
-<%@ page import="java.util.List" %>
-<%@ page import="model.Registro" %>
+
+<%@page contentType="text/html" pageEncoding="UTF-8"%>
+<%@page import="java.util.List"%>
+<%@page import="model.Registro"%>
+
+<%!
+    private String escaparHtml(Object valor) {
+        if (valor == null) return "";
+
+        return String.valueOf(valor)
+                .replace("&", "&amp;")
+                .replace("<", "&lt;")
+                .replace(">", "&gt;")
+                .replace("\"", "&quot;")
+                .replace("'", "&#39;");
+    }
+%>
+
+<%
+    // ==========================================
+    // CONTROL DE SESIÓN Y ROLES
+    // ==========================================
+
+    if (session.getAttribute("usuario") == null) {
+        response.sendRedirect("login.jsp");
+        return;
+    }
+
+    String nombreSesion = (String) session.getAttribute("nombre");
+    String rolSesion = (String) session.getAttribute("rol");
+
+    if (nombreSesion == null || nombreSesion.trim().isEmpty()) {
+        nombreSesion = "Usuario";
+    }
+
+    if (rolSesion == null) {
+        rolSesion = "USUARIO";
+    }
+
+    boolean esAdmin = "ADMINISTRADOR".equalsIgnoreCase(rolSesion);
+
+    String inicial = nombreSesion.trim().substring(0, 1).toUpperCase();
+%>
 
 <!DOCTYPE html>
 <html lang="es">
 
 <head>
-
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>Statistics System - Registro</title>
+    <title>Statistics System | Registro</title>
 
-    <style>
-
-        body {
-            font-family: Arial, sans-serif;
-            margin: 40px;
-            background-color: #f5f5f5;
-        }
-
-        h1 {
-            margin-bottom: 5px;
-        }
-
-        .contenedor {
-            background-color: white;
-            padding: 30px;
-            border-radius: 10px;
-        }
-
-        form {
-            width: 450px;
-        }
-
-        label {
-            font-weight: bold;
-        }
-
-        input,
-        textarea {
-            width: 100%;
-            padding: 8px;
-            margin-top: 5px;
-            box-sizing: border-box;
-        }
-
-        button {
-            padding: 8px 15px;
-            cursor: pointer;
-            margin: 3px;
-        }
-
-        table {
-            border-collapse: collapse;
-            width: 100%;
-            margin-top: 30px;
-            background-color: white;
-        }
-
-        th,
-        td {
-            border: 1px solid #999;
-            padding: 8px;
-            text-align: left;
-        }
-
-        th {
-            background-color: #eeeeee;
-        }
-
-        .mensaje {
-            padding: 10px;
-            margin: 15px 0;
-            border: 1px solid #999;
-            background-color: #eeeeee;
-        }
-
-        .acciones {
-            white-space: nowrap;
-        }
-
-    </style>
-
+    <link rel="stylesheet"
+          href="${pageContext.request.contextPath}/css/estilos.css">
 </head>
 
 <body>
 
-<div class="contenedor">
+    <!-- ======================================
+         MENÚ LATERAL
+    ======================================= -->
 
-    <h1>Statistics System</h1>
+    <aside class="sidebar">
 
-    <h2>Registro de uso del laboratorio</h2>
+        <div class="logo">
 
+            <div class="logo-icon">
+                <img src="${pageContext.request.contextPath}/img/logo.png"
+                     alt="Statistics System">
+            </div>
 
-    <!-- ================================================= -->
-    <!-- MENSAJE -->
-    <!-- ================================================= -->
-
-    <%
-        String mensaje = request.getParameter("mensaje");
-
-        if (mensaje != null) {
-    %>
-
-        <div class="mensaje">
-
-            <strong>
-                <%= mensaje %>
-            </strong>
+            <div>
+                <h2>Statistics</h2>
+                <span>SYSTEM</span>
+            </div>
 
         </div>
 
-    <%
-        }
-    %>
+        <div class="menu-titulo">MENÚ PRINCIPAL</div>
 
+        <nav class="navegacion">
 
-    <!-- ================================================= -->
-    <!-- FORMULARIO PARA INSERTAR -->
-    <!-- ================================================= -->
+            <a href="${pageContext.request.contextPath}/index.jsp"
+               class="nav-link">
+                <span>▦</span> Panel principal
+            </a>
 
-    <h3>Nuevo registro</h3>
+            <a href="${pageContext.request.contextPath}/registro.jsp"
+               class="nav-link activo">
+                <span>＋</span> Registrar uso
+            </a>
 
-    <form action="RegistroServlet" method="POST">
+            <a href="${pageContext.request.contextPath}/RegistroServlet"
+               class="nav-link">
+                <span>▤</span> Consultar registros
+            </a>
 
-        <input type="hidden"
-               name="accion"
-               value="insertar">
+            <a href="${pageContext.request.contextPath}/reportes.jsp"
+               class="nav-link">
+                <span>▥</span> Reportes
+            </a>
 
+            <% if (esAdmin) { %>
 
-        <label>
-            Programa acad�mico:
-        </label>
+                <a href="${pageContext.request.contextPath}/configuracion.jsp"
+                   class="nav-link">
+                    <span>⚙</span> Configuración
+                </a>
 
-        <br>
+            <% } %>
 
-        <input type="text"
-               name="programa"
-               required>
+        </nav>
 
-        <br><br>
+        <div class="sidebar-footer">
+            <span class="estado"></span>
+            Sistema de gestión
+            <small>Versión 1.0</small>
+        </div>
 
+    </aside>
 
-        <label>
-            Asignatura:
-        </label>
+    <!-- ======================================
+         CONTENIDO PRINCIPAL
+    ======================================= -->
 
-        <br>
+    <main class="contenido">
 
-        <input type="text"
-               name="asignatura"
-               required>
+        <!-- ENCABEZADO -->
 
-        <br><br>
+        <header class="topbar">
 
+            <div>
+                <h1>Registro de laboratorio</h1>
+                <p>Administración de actividades académicas</p>
+            </div>
 
-        <label>
-            Docente:
-        </label>
+            <div class="usuario">
 
-        <br>
+                <div class="avatar">
+                    <%= escaparHtml(inicial) %>
+                </div>
 
-        <input type="text"
-               name="docente"
-               required>
+                <div>
+                    <strong><%= escaparHtml(nombreSesion) %></strong>
 
-        <br><br>
+                    <small>
+                        <%= esAdmin ? "Administrador" : "Usuario" %>
+                    </small>
+                </div>
 
+            </div>
 
-        <label>
-            �rea:
-        </label>
+        </header>
 
-        <br>
+        <!-- PRESENTACIÓN -->
 
-        <input type="text"
-               name="area"
-               required>
+        <section class="bienvenida">
 
-        <br><br>
+            <div>
 
+                <span class="etiqueta">GESTIÓN ACADÉMICA</span>
 
-        <label>
-            Fecha:
-        </label>
+                <h2>Registro de uso de laboratorios</h2>
 
-        <br>
+                <p>
+                    Registra la información de las actividades
+                    desarrolladas en los laboratorios de
+                    simulación clínica.
+                </p>
 
-        <input type="date"
-               name="fecha"
-               required>
+            </div>
 
-        <br><br>
+            <div class="bienvenida-icono">📋</div>
 
+        </section>
 
-        <label>
-            Horario:
-        </label>
-
-        <br>
-
-        <input type="text"
-               name="horario"
-               required>
-
-        <br><br>
-
-
-        <label>
-            Elementos utilizados:
-        </label>
-
-        <br>
-
-        <textarea
-            name="elementos"
-            rows="4"
-            required></textarea>
-
-        <br><br>
-
-
-        <button type="submit">
-            Registrar uso
-        </button>
-
-    </form>
-
-
-    <hr>
-
-
-    <!-- ================================================= -->
-    <!-- CONSULTAR REGISTROS -->
-    <!-- ================================================= -->
-
-    <h2>
-        Registros del laboratorio
-    </h2>
-
-
-    <a href="RegistroServlet">
-
-        <button type="button">
-            Consultar registros
-        </button>
-
-    </a>
-
-
-    <%
-        List<Registro> registros =
-                (List<Registro>) request.getAttribute("registros");
-
-        if (registros != null && !registros.isEmpty()) {
-    %>
-
-
-    <!-- ================================================= -->
-    <!-- TABLA -->
-    <!-- ================================================= -->
-
-    <table>
-
-        <thead>
-
-            <tr>
-
-                <th>
-                    ID
-                </th>
-
-                <th>
-                    Programa
-                </th>
-
-                <th>
-                    Asignatura
-                </th>
-
-                <th>
-                    Docente
-                </th>
-
-                <th>
-                    �rea
-                </th>
-
-                <th>
-                    Fecha
-                </th>
-
-                <th>
-                    Horario
-                </th>
-
-                <th>
-                    Elementos utilizados
-                </th>
-
-                <th>
-                    Acciones
-                </th>
-
-            </tr>
-
-        </thead>
-
-
-        <tbody>
+        <!-- MENSAJES -->
 
         <%
-            for (Registro registro : registros) {
+            String mensaje = request.getParameter("mensaje");
+            String error = (String) request.getAttribute("error");
         %>
 
-            <tr>
+        <% if (mensaje != null && !mensaje.trim().isEmpty()) { %>
 
-                <td>
-                    <%= registro.getId() %>
-                </td>
+            <div class="alerta alerta-exito">
+                <strong>✓</strong>
+                <span><%= escaparHtml(mensaje) %></span>
+            </div>
 
-                <td>
-                    <%= registro.getPrograma() %>
-                </td>
+        <% } %>
 
-                <td>
-                    <%= registro.getAsignatura() %>
-                </td>
+        <% if (error != null && !error.trim().isEmpty()) { %>
 
-                <td>
-                    <%= registro.getDocente() %>
-                </td>
+            <div class="alerta alerta-error">
+                <strong>!</strong>
+                <span><%= escaparHtml(error) %></span>
+            </div>
 
-                <td>
-                    <%= registro.getArea() %>
-                </td>
+        <% } %>
 
-                <td>
-                    <%= registro.getFecha() %>
-                </td>
+        <!-- ======================================
+             FORMULARIO DE REGISTRO
+        ======================================= -->
 
-                <td>
-                    <%= registro.getHorario() %>
-                </td>
+        <section class="panel-registro">
 
-                <td>
-                    <%= registro.getElementos() %>
-                </td>
+            <div class="panel-titulo">
 
+                <div>
+                    <h2>Nuevo registro</h2>
+                    <p>Completa los campos para registrar una actividad.</p>
+                </div>
 
-                <!-- ===================================== -->
+                <span class="etiqueta-panel">FORMULARIO</span>
+
+            </div>
+
+            <form action="${pageContext.request.contextPath}/RegistroServlet"
+                  method="POST"
+                  class="formulario">
+
+                <input type="hidden" name="accion" value="insertar">
+
+                <!-- INFORMACIÓN ACADÉMICA -->
+
+                <div class="grupo-formulario">
+
+                    <h3>01. Información académica</h3>
+
+                    <div class="campos-grid">
+
+                        <div class="campo">
+                            <label for="programa">Programa académico *</label>
+
+                            <input type="text"
+                                   id="programa"
+                                   name="programa"
+                                   placeholder="Ej. Enfermería"
+                                   maxlength="150"
+                                   required>
+                        </div>
+
+                        <div class="campo">
+                            <label for="asignatura">Asignatura *</label>
+
+                            <input type="text"
+                                   id="asignatura"
+                                   name="asignatura"
+                                   placeholder="Nombre de la asignatura"
+                                   maxlength="150"
+                                   required>
+                        </div>
+
+                        <div class="campo">
+                            <label for="docente">Docente responsable *</label>
+
+                            <input type="text"
+                                   id="docente"
+                                   name="docente"
+                                   placeholder="Nombre completo del docente"
+                                   maxlength="150"
+                                   required>
+                        </div>
+
+                        <div class="campo">
+                            <label for="area">Área o laboratorio *</label>
+
+                            <input type="text"
+                                   id="area"
+                                   name="area"
+                                   placeholder="Ej. Simulación clínica"
+                                   maxlength="150"
+                                   required>
+                        </div>
+
+                    </div>
+
+                </div>
+
+                <!-- INFORMACIÓN DE LA ACTIVIDAD -->
+
+                <div class="grupo-formulario">
+
+                    <h3>02. Información de la actividad</h3>
+
+                    <div class="campos-grid">
+
+                        <div class="campo">
+                            <label for="fecha">Fecha de actividad *</label>
+
+                            <input type="date"
+                                   id="fecha"
+                                   name="fecha"
+                                   required>
+                        </div>
+
+                        <div class="campo">
+                            <label for="horario">Horario *</label>
+
+                            <input type="text"
+                                   id="horario"
+                                   name="horario"
+                                   placeholder="Ej. 8:00 a.m. - 10:00 a.m."
+                                   maxlength="100"
+                                   required>
+                        </div>
+
+                    </div>
+
+                </div>
+
+                <!-- RECURSOS UTILIZADOS -->
+
+                <div class="grupo-formulario">
+
+                    <h3>03. Recursos utilizados</h3>
+
+                    <div class="campo">
+
+                        <label for="elementos">Elementos utilizados *</label>
+
+                        <textarea id="elementos"
+                                  name="elementos"
+                                  rows="4"
+                                  maxlength="2000"
+                                  placeholder="Describe los simuladores, equipos, materiales e instrumentos utilizados durante la actividad..."
+                                  required></textarea>
+
+                    </div>
+
+                </div>
+
                 <!-- BOTONES -->
-                <!-- ===================================== -->
 
-                <td class="acciones">
+                <div class="acciones-formulario">
 
+                    <button type="reset" class="boton-secundario">
+                        Limpiar formulario
+                    </button>
 
-                    <!-- EDITAR -->
+                    <button type="submit" class="boton-principal">
+                        Registrar actividad →
+                    </button>
 
-                    <a href="editar.jsp?id=<%= registro.getId() %>">
+                </div>
 
-                        <button type="button">
-                            Editar
-                        </button>
+            </form>
 
-                    </a>
+        </section>
 
+        <!-- ======================================
+             TABLA DE REGISTROS
+        ======================================= -->
 
-                    <!-- ELIMINAR -->
+        <section class="panel-registro">
 
-                    <a
-                        href="RegistroServlet?accion=eliminar&id=<%= registro.getId() %>"
-                        onclick="return confirm('�Est� seguro de eliminar este registro?');"
-                    >
+            <div class="panel-titulo">
 
-                        <button type="button">
-                            Eliminar
-                        </button>
+                <div>
+                    <h2>Registros del laboratorio</h2>
+                    <p>Consulta las actividades registradas.</p>
+                </div>
 
-                    </a>
+                <a href="${pageContext.request.contextPath}/RegistroServlet"
+                   class="boton-consultar">
+                    ↻ Actualizar registros
+                </a>
 
+            </div>
 
-                </td>
+            <%
+                List<Registro> registros =
+                    (List<Registro>) request.getAttribute("registros");
+            %>
 
-            </tr>
+            <% if (registros != null && !registros.isEmpty()) { %>
 
-        <%
-            }
-        %>
+                <div class="tabla-contenedor">
 
-        </tbody>
+                    <table class="tabla-registros">
 
-    </table>
+                        <thead>
 
+                            <tr>
+                                <th>ID</th>
+                                <th>Programa</th>
+                                <th>Asignatura</th>
+                                <th>Docente</th>
+                                <th>Área</th>
+                                <th>Fecha</th>
+                                <th>Horario</th>
+                                <th>Elementos</th>
 
-    <%
-        } else {
-    %>
+                                <% if (esAdmin) { %>
+                                    <th>Acciones</th>
+                                <% } %>
 
+                            </tr>
 
-        <p>
-            No hay registros cargados.
-            Presiona "Consultar registros".
-        </p>
+                        </thead>
 
+                        <tbody>
 
-    <%
-        }
-    %>
+                            <% for (Registro registro : registros) { %>
 
-</div>
+                                <tr>
+
+                                    <td><%= registro.getId() %></td>
+
+                                    <td>
+                                        <%= escaparHtml(registro.getPrograma()) %>
+                                    </td>
+
+                                    <td>
+                                        <%= escaparHtml(registro.getAsignatura()) %>
+                                    </td>
+
+                                    <td>
+                                        <%= escaparHtml(registro.getDocente()) %>
+                                    </td>
+
+                                    <td>
+                                        <%= escaparHtml(registro.getArea()) %>
+                                    </td>
+
+                                    <td>
+                                        <%= escaparHtml(registro.getFecha()) %>
+                                    </td>
+
+                                    <td>
+                                        <%= escaparHtml(registro.getHorario()) %>
+                                    </td>
+
+                                    <td>
+                                        <%= escaparHtml(registro.getElementos()) %>
+                                    </td>
+
+                                    <% if (esAdmin) { %>
+
+                                        <td class="acciones-tabla">
+
+                                            <a class="accion-editar"
+                                               href="${pageContext.request.contextPath}/editar.jsp?id=<%= registro.getId() %>">
+                                                Editar
+                                            </a>
+
+                                            <form action="${pageContext.request.contextPath}/RegistroServlet"
+                                                  method="POST"
+                                                  class="form-eliminar"
+                                                  onsubmit="return confirm('¿Está seguro de eliminar este registro?');">
+
+                                                <input type="hidden"
+                                                       name="accion"
+                                                       value="eliminar">
+
+                                                <input type="hidden"
+                                                       name="id"
+                                                       value="<%= registro.getId() %>">
+
+                                                <button type="submit"
+                                                        class="accion-eliminar">
+                                                    Eliminar
+                                                </button>
+
+                                            </form>
+
+                                        </td>
+
+                                    <% } %>
+
+                                </tr>
+
+                            <% } %>
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+            <% } else { %>
+
+                <div class="sin-registros">
+
+                    <div>📂</div>
+
+                    <h3>No hay registros disponibles</h3>
+
+                    <p>
+                        Cuando registres una actividad aparecerá en esta tabla.
+                    </p>
+
+                </div>
+
+            <% } %>
+
+        </section>
+
+        <!-- PIE DE PÁGINA -->
+
+        <footer class="footer">
+
+            Statistics System © 2026 |
+            Sistema de estadísticas de laboratorios clínicos
+
+        </footer>
+
+    </main>
 
 </body>
-
 </html>

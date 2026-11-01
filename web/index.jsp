@@ -1,249 +1,334 @@
+
+
+<%@page contentType="text/html" pageEncoding="UTF-8"%>
+
+<%
+    // Recuperar información del usuario autenticado.
+    String nombreUsuario = (String) session.getAttribute("nombre");
+    String rolUsuario = (String) session.getAttribute("rol");
+
+    // Si no existe una sesión, regresar al login.
+    if (nombreUsuario == null || rolUsuario == null) {
+        response.sendRedirect(
+            request.getContextPath() + "/login.jsp"
+        );
+        return;
+    }
+
+    String inicial = nombreUsuario.substring(0, 1).toUpperCase();
+    boolean esAdministrador = "ADMINISTRADOR".equals(rolUsuario);
+%>
+
 <!DOCTYPE html>
 <html lang="es">
 
 <head>
 
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>Statistics System</title>
+    <title>Statistics System | Panel principal</title>
 
-    <style>
-
-        * {
-            box-sizing: border-box;
-        }
-
-        body {
-            margin: 0;
-            font-family: Arial, sans-serif;
-            background-color: #f4f6f8;
-        }
-
-        .encabezado {
-            background-color: #1f4e78;
-            color: white;
-            padding: 25px 40px;
-        }
-
-        .encabezado h1 {
-            margin: 0;
-        }
-
-        .encabezado p {
-            margin-bottom: 0;
-        }
-
-        .contenedor {
-            width: 90%;
-            max-width: 1100px;
-            margin: 40px auto;
-        }
-
-        .bienvenida {
-            background-color: white;
-            padding: 25px;
-            border-radius: 10px;
-            margin-bottom: 30px;
-        }
-
-        .bienvenida h2 {
-            margin-top: 0;
-        }
-
-        .menu {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 25px;
-        }
-
-        .tarjeta {
-            background-color: white;
-            padding: 30px;
-            border-radius: 10px;
-            text-decoration: none;
-            color: #222;
-            border: 1px solid #ddd;
-        }
-
-        .tarjeta:hover {
-            box-shadow: 0 5px 15px rgba(0,0,0,0.15);
-        }
-
-        .tarjeta h3 {
-            margin-top: 0;
-            color: #1f4e78;
-        }
-
-        .boton {
-            display: inline-block;
-            margin-top: 15px;
-            padding: 10px 20px;
-            background-color: #1f4e78;
-            color: white;
-            border-radius: 5px;
-            text-decoration: none;
-        }
-
-        .pie {
-            text-align: center;
-            margin-top: 50px;
-            padding: 20px;
-            color: #666;
-        }
-
-        @media (max-width: 700px) {
-
-            .menu {
-                grid-template-columns: 1fr;
-            }
-
-        }
-
-    </style>
+    <link rel="stylesheet"
+          href="${pageContext.request.contextPath}/css/estilos.css">
 
 </head>
 
 <body>
 
+    <!-- MENÚ LATERAL -->
+    <aside class="sidebar">
 
-<header class="encabezado">
+        <div class="logo-icon">
+            <img src="${pageContext.request.contextPath}/img/logo.png"
+                 alt="Logo Statistics System">
+        </div>
 
-    <h1>Statistics System</h1>
+        <div class="menu-titulo">MENÚ PRINCIPAL</div>
 
-    <p>
-        Sistema de estad�sticas de uso de laboratorios de simulaci�n cl�nica
-    </p>
+        <nav class="navegacion">
 
-</header>
-
-
-<main class="contenedor">
-
-
-    <section class="bienvenida">
-
-        <h2>
-            Bienvenido al sistema
-        </h2>
-
-        <p>
-            Desde esta plataforma puede registrar y consultar
-            la informaci�n relacionada con el uso de los laboratorios
-            de simulaci�n cl�nica.
-        </p>
-
-    </section>
-
-
-    <section class="menu">
-
-
-        <!-- REGISTRAR -->
-
-        <div class="tarjeta">
-
-            <h3>
-                Registrar uso
-            </h3>
-
-            <p>
-                Registre un nuevo uso del laboratorio indicando
-                programa acad�mico, asignatura, docente, �rea,
-                fecha, horario y elementos utilizados.
-            </p>
-
-            <a class="boton"
-               href="registro.jsp">
-
-                Registrar uso
-
+            <a href="index.jsp" class="nav-link activo">
+                <span>▦</span> Panel principal
             </a>
+
+            <a href="registro.jsp" class="nav-link">
+                <span>＋</span> Registrar uso
+            </a>
+
+            <a href="RegistroServlet" class="nav-link">
+                <span>▤</span> Consultar registros
+            </a>
+
+            <a href="reportes.jsp" class="nav-link">
+                <span>▥</span> Reportes
+            </a>
+
+            <% if (esAdministrador) { %>
+
+                <a href="configuracion.jsp" class="nav-link">
+                    <span>⚙</span> Configuración
+                </a>
+
+            <% } %>
+
+        </nav>
+
+        <div class="sidebar-footer">
+
+            <span class="estado"></span>
+            Sistema de gestión
+
+            <small>Versión 1.0</small>
 
         </div>
 
-
-        <!-- CONSULTAR -->
-
-        <div class="tarjeta">
-
-            <h3>
-                Consultar registros
-            </h3>
-
-            <p>
-                Consulte los registros almacenados en la base
-                de datos y gestione la informaci�n registrada.
-            </p>
-
-            <a class="boton"
-               href="RegistroServlet">
-
-                Consultar registros
-
-            </a>
-
-        </div>
+    </aside>
 
 
-        <!-- REPORTES -->
-
-        <div class="tarjeta">
-
-            <h3>
-                Reportes
-            </h3>
-
-            <p>
-                M�dulo destinado a la generaci�n y consulta
-                de estad�sticas sobre el uso de los laboratorios.
-            </p>
-
-            <a class="boton"
-               href="reportes.jsp">
-
-                Ver reportes
-
-            </a>
-
-        </div>
+    <!-- CONTENIDO PRINCIPAL -->
+    <main class="contenido">
 
 
-        <!-- CONFIGURACI�N -->
+        <!-- BARRA SUPERIOR -->
+        <header class="topbar">
 
-        <div class="tarjeta">
+            <div class="usuario-sesion">
 
-            <h3>
-                Configuraci�n
-            </h3>
+                <div class="avatar">
+                    <%= inicial %>
+                </div>
 
-            <p>
-                Administraci�n de las opciones y par�metros
-                utilizados por el sistema.
-            </p>
+                <div class="datos-usuario">
 
-            <a class="boton"
-               href="configuracion.jsp">
+                    <strong>
+                        <%= nombreUsuario %>
+                    </strong>
 
-                Configuraci�n
+                    <span>
+                        <%= esAdministrador ? "Administrador" : "Usuario" %>
+                    </span>
 
-            </a>
+                </div>
 
-        </div>
+                <form action="${pageContext.request.contextPath}/LogoutServlet"
+                      method="POST"
+                      onsubmit="return confirm('¿Deseas cerrar tu sesión?');">
+
+                    <button type="submit" class="btn-cerrar">
+                        ⏻ Cerrar sesión
+                    </button>
+
+                </form>
+
+            </div>
+
+        </header>
 
 
-    </section>
+        <!-- BIENVENIDA -->
+        <section class="bienvenida">
+
+            <div>
+
+                <span class="etiqueta">
+                    PLATAFORMA DE GESTIÓN
+                </span>
+
+                <h2>Bienvenido a Statistics System</h2>
+
+                <p>
+                    Administra, consulta y analiza la información
+                    relacionada con el uso de los laboratorios
+                    de simulación clínica.
+                </p>
+
+            </div>
+
+            <div class="bienvenida-icono">
+                📊
+            </div>
+
+        </section>
 
 
-</main>
+        <!-- INDICADORES GENERALES -->
+        <section class="seccion">
+
+            <div class="seccion-encabezado">
+
+                <div>
+                    <h2>Resumen del sistema</h2>
+                    <p>Indicadores generales de gestión</p>
+                </div>
+
+            </div>
+
+            <div class="indicadores">
+
+                <article class="indicador">
+
+                    <div class="indicador-icono azul">▤</div>
+
+                    <div>
+                        <span>Registros</span>
+                        <h3>--</h3>
+                        <small>Total de registros</small>
+                    </div>
+
+                </article>
 
 
-<footer class="pie">
+                <article class="indicador">
 
-    Statistics System � 2026
+                    <div class="indicador-icono verde">⌂</div>
 
-</footer>
+                    <div>
+                        <span>Laboratorios</span>
+                        <h3>--</h3>
+                        <small>Áreas disponibles</small>
+                    </div>
 
+                </article>
+
+
+                <article class="indicador">
+
+                    <div class="indicador-icono naranja">◷</div>
+
+                    <div>
+                        <span>Horas de uso</span>
+                        <h3>--</h3>
+                        <small>Horas registradas</small>
+                    </div>
+
+                </article>
+
+
+                <article class="indicador">
+
+                    <div class="indicador-icono morado">▧</div>
+
+                    <div>
+                        <span>Reportes</span>
+                        <h3>--</h3>
+                        <small>Consultas estadísticas</small>
+                    </div>
+
+                </article>
+
+            </div>
+
+        </section>
+
+
+        <!-- MÓDULOS DEL SISTEMA -->
+        <section class="seccion">
+
+            <div class="seccion-encabezado">
+
+                <div>
+                    <h2>Módulos del sistema</h2>
+                    <p>Selecciona el módulo que deseas utilizar</p>
+                </div>
+
+            </div>
+
+
+            <div class="modulos">
+
+
+                <article class="modulo">
+
+                    <div class="modulo-icono azul">＋</div>
+
+                    <h3>Registrar uso</h3>
+
+                    <p>
+                        Registra las actividades realizadas en los
+                        laboratorios, incluyendo programas,
+                        asignaturas, docentes y horarios.
+                    </p>
+
+                    <a href="registro.jsp">
+                        Ingresar al módulo →
+                    </a>
+
+                </article>
+
+
+                <article class="modulo">
+
+                    <div class="modulo-icono verde">▤</div>
+
+                    <h3>Consultar registros</h3>
+
+                    <p>
+                        Consulta y administra la información
+                        almacenada en la base de datos.
+                    </p>
+
+                    <a href="RegistroServlet">
+                        Ingresar al módulo →
+                    </a>
+
+                </article>
+
+
+                <article class="modulo">
+
+                    <div class="modulo-icono naranja">▥</div>
+
+                    <h3>Reportes y estadísticas</h3>
+
+                    <p>
+                        Consulta información estadística sobre
+                        la utilización de los laboratorios.
+                    </p>
+
+                    <a href="reportes.jsp">
+                        Ingresar al módulo →
+                    </a>
+
+                </article>
+
+
+                <% if (esAdministrador) { %>
+
+                    <article class="modulo">
+
+                        <div class="modulo-icono morado">⚙</div>
+
+                        <h3>Configuración</h3>
+
+                        <p>
+                            Gestiona las opciones y parámetros
+                            generales de la plataforma.
+                        </p>
+
+                        <a href="configuracion.jsp">
+                            Ingresar al módulo →
+                        </a>
+
+                    </article>
+
+                <% } %>
+
+
+            </div>
+
+        </section>
+
+
+        <!-- PIE DE PÁGINA -->
+        <footer class="footer">
+
+            Statistics System © 2026 |
+            Sistema de estadísticas de laboratorios clínicos
+
+        </footer>
+
+    </main>
 
 </body>
-
 </html>

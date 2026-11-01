@@ -1,0 +1,808 @@
+
+/* ==========================================
+   STATISTICS SYSTEM
+   Estilos generales de la plataforma
+   ========================================== */
+
+/* Identidad visual oficial de Statistics System */
+:root {
+    --azul: #3F8DCB;
+    --azul-oscuro: #24577D;
+    --turquesa: #45BDBE;
+    --fondo: #F4F8FB;
+    --blanco: #FFFFFF;
+    --texto: #263445;
+    --gris: #8492A6;
+    --borde: #E5EAF0;
+}
+
+/* Configuración general */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: Arial, Helvetica, sans-serif;
+    background: var(--fondo);
+    color: var(--texto);
+}
+
+/* Menú lateral */
+.sidebar {
+    width: 250px;
+    height: 100vh;
+    background: var(--azul-oscuro);
+    position: fixed;
+    top: 0;
+    left: 0;
+    padding: 28px 18px;
+    color: white;
+    display: flex;
+    flex-direction: column;
+}
+
+.logo {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 5px 10px 35px;
+}
+
+.logo-icon {
+    background: transparent;
+    width: 55px;
+    height: 55px;
+    padding: 0;
+    flex-shrink: 0;
+}
+
+.logo-icon img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
+
+.logo h2 {
+    font-size: 19px;
+}
+
+.logo span {
+    font-size: 10px;
+    letter-spacing: 3px;
+    color: #aabed0;
+}
+
+.menu-titulo {
+    font-size: 10px;
+    color: #91a8bb;
+    margin: 15px 10px;
+    letter-spacing: 1.5px;
+}
+
+.navegacion {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.nav-link {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    color: #c7d5e2;
+    text-decoration: none;
+    padding: 14px 12px;
+    border-radius: 8px;
+    transition: 0.3s;
+    font-size: 14px;
+}
+
+.nav-link span {
+    font-size: 19px;
+}
+
+.nav-link:hover,
+.nav-link.activo {
+    background: var(--azul);
+    color: white;
+}
+
+.sidebar-footer {
+    margin-top: auto;
+    border-top: 1px solid #36516b;
+    padding: 20px 10px 0;
+    font-size: 12px;
+    color: #c7d5e2;
+}
+
+.sidebar-footer small {
+    display: block;
+    margin-top: 8px;
+    color: #91a8bb;
+}
+
+.estado {
+    display: inline-block;
+    width: 8px;
+    height: 8px;
+    background: #35d39a;
+    border-radius: 50%;
+    margin-right: 6px;
+}
+
+/* Contenido principal */
+.contenido {
+    margin-left: 250px;
+    padding: 30px 38px;
+}
+
+/* Encabezado superior */
+.topbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 30px;
+}
+
+.topbar h1 {
+    font-size: 25px;
+    margin-bottom: 7px;
+}
+
+.topbar p {
+    font-size: 13px;
+    color: var(--gris);
+}
+
+.usuario {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.usuario strong,
+.usuario small {
+    display: block;
+    font-size: 12px;
+}
+
+.usuario small {
+    color: var(--gris);
+    margin-top: 4px;
+}
+
+.avatar {
+    background: var(--azul);
+    color: white;
+    width: 42px;
+    height: 42px;
+    display: grid;
+    place-items: center;
+    border-radius: 50%;
+    font-weight: bold;
+}
+
+/* Bienvenida */
+.bienvenida {
+    background: linear-gradient(110deg, #1f4e78, #18a6a6);
+    color: white;
+    padding: 32px;
+    border-radius: 12px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 35px;
+}
+
+.etiqueta {
+    font-size: 10px;
+    letter-spacing: 2px;
+    opacity: 0.8;
+}
+
+.bienvenida h2 {
+    font-size: 25px;
+    margin: 12px 0;
+}
+
+.bienvenida p {
+    max-width: 650px;
+    font-size: 14px;
+    line-height: 1.7;
+}
+
+.bienvenida-icono {
+    font-size: 65px;
+    opacity: 0.8;
+}
+
+/* Secciones */
+.seccion {
+    margin-bottom: 35px;
+}
+
+.seccion-encabezado {
+    margin-bottom: 20px;
+}
+
+.seccion-encabezado h2 {
+    font-size: 19px;
+    margin-bottom: 6px;
+}
+
+.seccion-encabezado p {
+    color: var(--gris);
+    font-size: 13px;
+}
+
+/* Indicadores */
+.indicadores {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 18px;
+}
+
+.indicador {
+    background: white;
+    padding: 20px;
+    border: 1px solid var(--borde);
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.indicador-icono,
+.modulo-icono {
+    width: 45px;
+    height: 45px;
+    border-radius: 10px;
+    display: grid;
+    place-items: center;
+    font-size: 23px;
+}
+
+.indicador span {
+    color: var(--gris);
+    font-size: 12px;
+}
+
+.indicador h3 {
+    font-size: 22px;
+    margin: 5px 0;
+}
+
+.indicador small {
+    font-size: 10px;
+    color: var(--gris);
+}
+
+/* Colores de indicadores y módulos */
+.azul {
+    background: #e4efff;
+    color: #3478d4;
+}
+
+.verde {
+    background: #e0f7ed;
+    color: #20a477;
+}
+
+.naranja {
+    background: #fff0df;
+    color: #e69535;
+}
+
+.morado {
+    background: #f0e8ff;
+    color: #8955c7;
+}
+
+/* Tarjetas de módulos */
+.modulos {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+}
+
+.modulo {
+    background: white;
+    padding: 25px;
+    border: 1px solid var(--borde);
+    border-radius: 10px;
+    transition: 0.3s;
+}
+
+.modulo:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.07);
+}
+
+.modulo h3 {
+    font-size: 16px;
+    margin: 15px 0 10px;
+}
+
+.modulo p {
+    font-size: 13px;
+    line-height: 1.7;
+    color: var(--gris);
+    min-height: 65px;
+}
+
+.modulo a {
+    display: inline-block;
+    margin-top: 15px;
+    color: var(--azul);
+    text-decoration: none;
+    font-size: 13px;
+    font-weight: bold;
+}
+
+.modulo a:hover {
+    color: var(--turquesa);
+}
+
+/* Pie de página */
+.footer {
+    border-top: 1px solid var(--borde);
+    padding: 20px 0;
+    text-align: center;
+    color: var(--gris);
+    font-size: 11px;
+}
+
+/* Diseño adaptable */
+@media (max-width: 1100px) {
+    .indicadores {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 700px) {
+    .sidebar {
+        position: relative;
+        width: 100%;
+        height: auto;
+    }
+
+    .sidebar-footer {
+        display: none;
+    }
+
+    .contenido {
+        margin-left: 0;
+        padding: 20px;
+    }
+
+    .topbar {
+        align-items: flex-start;
+        gap: 15px;
+        flex-direction: column;
+    }
+
+    .bienvenida-icono {
+        display: none;
+    }
+
+    .modulos,
+    .indicadores {
+        grid-template-columns: 1fr;
+    }
+}
+
+
+/* ==========================================
+   MÓDULO DE REGISTRO
+   Statistics System
+   ========================================== */
+
+/* Paneles principales */
+.panel-registro {
+    background: #FFFFFF;
+    padding: 28px;
+    border: 1px solid #E5EAF0;
+    border-radius: 12px;
+    margin-bottom: 30px;
+}
+
+.panel-titulo {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 15px;
+    margin-bottom: 25px;
+}
+
+.panel-titulo h2 {
+    font-size: 19px;
+    margin-bottom: 7px;
+    color: #263445;
+}
+
+.panel-titulo p {
+    font-size: 13px;
+    color: #8492A6;
+}
+
+.etiqueta-panel {
+    background: #E7F6F6;
+    color: #299E9F;
+    padding: 8px 12px;
+    border-radius: 6px;
+    font-size: 10px;
+    font-weight: bold;
+    letter-spacing: 1px;
+}
+
+/* Organización del formulario */
+.grupo-formulario {
+    border-bottom: 1px solid #E5EAF0;
+    padding-bottom: 25px;
+    margin-bottom: 25px;
+}
+
+.grupo-formulario h3 {
+    color: #3F8DCB;
+    font-size: 15px;
+    margin-bottom: 20px;
+}
+
+.campos-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+}
+
+.campo {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.campo label {
+    color: #34475A;
+    font-size: 13px;
+    font-weight: bold;
+}
+
+.campo input,
+.campo textarea {
+    width: 100%;
+    padding: 12px 14px;
+    border: 1px solid #DCE4EC;
+    border-radius: 7px;
+    font-family: Arial, sans-serif;
+    font-size: 13px;
+    color: #263445;
+    background: #FFFFFF;
+    outline: none;
+    transition: 0.2s;
+}
+
+.campo input:focus,
+.campo textarea:focus {
+    border-color: #45BDBE;
+    box-shadow: 0 0 0 3px rgba(69, 189, 190, 0.12);
+}
+
+.campo textarea {
+    resize: vertical;
+    min-height: 100px;
+}
+
+.campo input::placeholder,
+.campo textarea::placeholder {
+    color: #A5B0BD;
+}
+
+/* Botones del formulario */
+.acciones-formulario {
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+.boton-principal,
+.boton-secundario,
+.boton-consultar {
+    display: inline-block;
+    border: none;
+    padding: 12px 20px;
+    border-radius: 7px;
+    font-size: 13px;
+    font-weight: bold;
+    cursor: pointer;
+    text-decoration: none;
+    transition: 0.2s;
+}
+
+.boton-principal {
+    background: #3F8DCB;
+    color: white;
+}
+
+.boton-principal:hover {
+    background: #2B73AD;
+}
+
+.boton-secundario {
+    background: #EEF2F6;
+    color: #536477;
+}
+
+.boton-secundario:hover {
+    background: #DFE7EF;
+}
+
+.boton-consultar {
+    background: #E7F6F6;
+    color: #299E9F;
+}
+
+.boton-consultar:hover {
+    background: #D4EEEE;
+}
+
+/* Mensajes */
+.alerta {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 15px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    font-size: 13px;
+}
+
+.alerta-exito {
+    background: #E7F7EF;
+    color: #16845B;
+    border: 1px solid #BCE8D0;
+}
+
+.alerta-error {
+    background: #FFF0F0;
+    color: #C74747;
+    border: 1px solid #F2CCCC;
+}
+
+/* Tabla */
+.tabla-contenedor {
+    width: 100%;
+    overflow-x: auto;
+}
+
+.tabla-registros {
+    width: 100%;
+    border-collapse: collapse;
+    min-width: 1000px;
+    font-size: 12px;
+}
+
+.tabla-registros th {
+    background: #EFF5FA;
+    color: #315C7D;
+    padding: 15px 12px;
+    text-align: left;
+    font-size: 11px;
+    white-space: nowrap;
+}
+
+.tabla-registros td {
+    padding: 13px 12px;
+    border-bottom: 1px solid #E9EEF3;
+    color: #536477;
+    vertical-align: middle;
+}
+
+.tabla-registros tbody tr:hover {
+    background: #F7FBFD;
+}
+
+.acciones-tabla {
+    white-space: nowrap;
+}
+
+.accion-editar,
+.accion-eliminar {
+    display: inline-block;
+    padding: 7px 10px;
+    border: none;
+    border-radius: 5px;
+    font-size: 11px;
+    font-weight: bold;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.accion-editar {
+    background: #E5F0FC;
+    color: #3478D4;
+}
+
+.accion-eliminar {
+    background: #FFF0F0;
+    color: #CF5151;
+}
+
+.form-eliminar {
+    display: inline;
+}
+
+/* Estado sin registros */
+.sin-registros {
+    text-align: center;
+    padding: 45px 15px;
+    color: #8492A6;
+}
+
+.sin-registros div {
+    font-size: 40px;
+    margin-bottom: 12px;
+}
+
+.sin-registros h3 {
+    color: #536477;
+    font-size: 16px;
+    margin-bottom: 8px;
+}
+
+.sin-registros p {
+    font-size: 13px;
+}
+
+/* Responsive del módulo */
+@media (max-width: 700px) {
+
+    .panel-registro {
+        padding: 18px;
+    }
+
+    .campos-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .panel-titulo {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
+    .acciones-formulario {
+        flex-direction: column;
+    }
+
+    .acciones-formulario button {
+        width: 100%;
+    }
+}
+
+/* ==========================================
+   MÓDULO DE REPORTES ESTADÍSTICOS
+   ========================================== */
+
+.barra-item {
+    margin-bottom: 25px;
+}
+
+.barra-info {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 10px;
+    font-size: 13px;
+}
+
+.barra-info strong {
+    color: #34475A;
+}
+
+.barra-info span {
+    color: #8492A6;
+    font-size: 12px;
+}
+
+.barra-fondo {
+    height: 13px;
+    width: 100%;
+    background: #EAF0F5;
+    border-radius: 20px;
+    overflow: hidden;
+}
+
+.barra-progreso {
+    height: 100%;
+    background: linear-gradient(90deg, #3F8DCB, #70B0DD);
+    border-radius: 20px;
+    transition: width 0.5s ease;
+}
+
+.barra-turquesa {
+    background: linear-gradient(90deg, #45BDBE, #79D2CF);
+}
+
+@media (max-width: 700px) {
+    .barra-info {
+        align-items: flex-start;
+        flex-direction: column;
+        gap: 5px;
+    }
+}
+
+
+/* =====================================
+   USUARIO CONECTADO - STATISTICS SYSTEM
+   ===================================== */
+
+.usuario-sesion {
+    display: flex !important;
+    flex-direction: row !important;
+    align-items: center !important;
+    justify-content: flex-end !important;
+    gap: 12px !important;
+    width: 100%;
+    padding: 10px 25px;
+}
+
+.usuario-sesion .avatar {
+    width: 42px;
+    height: 42px;
+    min-width: 42px;
+    border-radius: 50%;
+    background: #3F8DCB;
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    font-size: 17px;
+}
+
+.usuario-sesion .datos-usuario {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.usuario-sesion .datos-usuario strong {
+    color: #263445;
+    font-size: 13px;
+}
+
+.usuario-sesion .datos-usuario span {
+    color: #8492A6;
+    font-size: 11px;
+}
+
+.usuario-sesion form {
+    margin: 0;
+    display: flex;
+}
+
+.usuario-sesion .btn-cerrar {
+    background: white;
+    border: 1px solid #DCE4EC;
+    color: #D9534F;
+    padding: 10px 14px;
+    border-radius: 7px;
+    cursor: pointer;
+    font-size: 12px;
+    font-weight: bold;
+    white-space: nowrap;
+}
+
+.usuario-sesion .btn-cerrar:hover {
+    background: #FFF0F0;
+    border-color: #D9534F;
+}
+
+@media(max-width: 600px) {
+    .usuario-sesion {
+        justify-content: center !important;
+        flex-wrap: wrap;
+    }
+}
